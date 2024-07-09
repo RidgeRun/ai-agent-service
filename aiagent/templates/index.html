@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary, .btn-primary:hover, .btn-primary:active, .btn-primary:visited {
+            background-color: #232E3C !important;
+        }
+        .spinner-border {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-container">
+            <div hidden class="alert alert-success" role="alert" id="status_message">
+                <strong>Success!</strong>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header text-center">
+                            <h4>AI Agent</h4>
+                        </div>
+                        <div class="card-body">
+                            <form onsubmit="event.preventDefault(); sendRequest();">
+                                <div class="form-group">
+                                    <label for="inputText">Enter your request:</label>
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="inputText" placeholder="Ask something...">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" id="button" type="button" onclick="sendRequest()">
+                                                <i class="fas fa-paper-plane"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div class="text-center mt-3">
+                                        <div class="spinner-border text-primary" role="status" id="spinner" hidden>
+                                            <span class="sr-only">Loading...</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS and dependencies -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        // Determine the base path dynamically
+        const basePath = window.location.pathname.startsWith('/agent') ? '/agent' : '';
+
+        function showMessage(show, code=0, message_str="") {
+            let message = document.getElementById("status_message");
+            if (!show) {
+                message.setAttribute("hidden", "hidden");
+                return;
+            }
+
+            // Clear existing alert classes
+            message.classList.remove('alert-success', 'alert-danger');
+
+            // Add new alert class based on success or failure
+            if (code == -1) {
+                message.classList.add('alert-primary');
+                message.innerHTML = "<strong>Processing your request...</strong> ";
+            } else if (code == 0) {
+                message.classList.add('alert-success');
+                message.innerHTML = "<strong>Success! </strong> ";
+            } else {
+                message.classList.add('alert-danger');
+                message.innerHTML = "<strong>Failure! </strong> ";
+            }
+
+            // Show message box and update message string
+            message.removeAttribute("hidden");
+            message.innerHTML += message_str;
+        }
+
+        function toggleSpinner(show) {
+            let spinner = document.getElementById("spinner");
+            if (show) {
+                spinner.removeAttribute("hidden");
+            } else {
+                spinner.setAttribute("hidden", "hidden");
+            }
+        }
+
+        function sendRequest() {
+            const prompt_message = document.getElementById('inputText').value;
+
+            let data = { 'prompt': prompt_message };
+            // Show spinner and processing message
+            toggleSpinner(true);
+            showMessage(true, -1);
+
+            fetch(`${basePath}/prompt`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                const contentType = response.headers.get('content-type');
+                if (contentType && contentType.includes('application/json')) {
+                    return response.json();
+                } else {
+                    console.error('There was a problem with the fetch operation:', error);
+                    throw new Error('Response is not JSON');
+                }
+            })
+            .then(json => {
+                response_data = json;
+                showMessage(true, response_data['code'], response_data['message']);
+                console.log(response_data);
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+                showMessage(true, 1, 'Something went wrong');
+            })
+            .finally(() => {
+                toggleSpinner(false);
+            });
+        }
+    </script>
+</body>
+</html>

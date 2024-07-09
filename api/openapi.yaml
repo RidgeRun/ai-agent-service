@@ -1,0 +1,78 @@
+openapi: 3.0.3
+info:
+  title: AI Agent Microservice
+  description: >-
+    Documentation fot the AI Agent Microservice. AI Agent Microservice allows a natural communication between the user and other microservices.
+  contact:
+    email: support@ridgerun.com
+  version: 1.0.0
+externalDocs:
+  description: Find out more about AI Agent Microservice
+  url: https://developer.ridgerun.com
+servers:
+  - url: http://127.0.0.1:5010
+tags:
+  - name: prompt
+    description: Prompt
+paths:
+  /prompt:
+    put:
+      tags:
+        - prompt
+      summary: Send a propmt request to the service
+      description: Update the service prompt
+      operationId: update_prompt
+      requestBody:
+        description: Update the service prompt
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Prompt'
+        required: true
+      responses:
+        '200':
+          description: Successful operation
+        '400':
+          description: Operation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+    get:
+      tags:
+        - prompt
+      summary: Get the service prompt
+      description: Get the service prompt
+      operationId: get_prompt
+      responses:
+        '200':
+          description: Successful operation
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prompt'
+        '400':
+          description: Operation failed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiResponse'
+components:
+  schemas:
+    Prompt:
+      required:
+        - prompt
+      type: object
+      properties:
+        prompt:
+          type: string
+          format: string
+          example: 'Find a car'
+    ApiResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+          format: int32
+        message:
+          type: string

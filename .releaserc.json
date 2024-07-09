@@ -1,0 +1,17 @@
+{
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      ["@semantic-release/exec", {
+        "prepareCmd": "./.release/update_version_number.sh ${nextRelease.version}"
+      }],
+      ["@semantic-release/changelog", {
+        "changelogFile": "CHANGELOG.md"
+      }],
+      ["@semantic-release/git", {
+        "assets": ["CHANGELOG.md", "README.md", "api/openapi.yaml", "docs/source/conf.py", "setup.py", "docs/source/index.rst"],
+        "message": "Bump version number to ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }],
+      "@semantic-release/github"
+    ]
+  }

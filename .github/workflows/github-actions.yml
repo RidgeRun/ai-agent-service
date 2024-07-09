@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  pages:
+    runs-on: ubuntu-latest
+    environment:
+      name: Development
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 21
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.x
+
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y python3-pip python3-venv
+          npm install @semantic-release/github@10.0.0
+          npm install @semantic-release/exec@6.0.3
+          npm install @semantic-release/changelog@6.0.3
+          npm install @semantic-release/git@10.0.1
+
+      - name: Make release
+        env:
+            GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: npx semantic-release --debug
+
+      - name: Create documentation
+        run: |
+          python3 -m venv venv
+          source venv/bin/activate
+          pip install .
+          cd docs && make html && cd ..
+          mkdir public
+          mv docs/build/html/* public/
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
