@@ -8,7 +8,7 @@ info:
   version: 1.0.0
 externalDocs:
   description: Find out more about AI Agent Microservice
-  url: https://developer.ridgerun.com
+  url: https://developer.ridgerun.com/wiki/index.php/Metropolis_Microservices/RidgeRun_Services/AI_Agent
 servers:
   - url: http://127.0.0.1:5010
 tags:
