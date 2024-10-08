@@ -1,4 +1,4 @@
-## AI Agent Microservice 1.0.0
+## AI Agent Microservice 1.0.1
 
 AI Agent Microservice allows natural communication between the user and other microservices. This service
 uses the Hugging Face LLM  Trelis/Llama-2-7b-chat-hf-function-calling-v3 to convert text commands into API

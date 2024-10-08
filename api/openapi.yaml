@@ -5,7 +5,7 @@ info:
     Documentation fot the AI Agent Microservice. AI Agent Microservice allows a natural communication between the user and other microservices.
   contact:
     email: support@ridgerun.com
-  version: 1.0.0
+  version: 1.0.1
 externalDocs:
   description: Find out more about AI Agent Microservice
   url: https://developer.ridgerun.com/wiki/index.php/Metropolis_Microservices/RidgeRun_Services/AI_Agent
